@@ -3,8 +3,6 @@
 const mapboxgl = require('mapbox-gl');
 const getJSON = require('simple-get-json');
 const chroma = require('chroma-js');
-const turf = require('@turf/turf');
-const _ = require('lodash');
 
 var data = {};
 var filter = [];
@@ -21,41 +19,21 @@ const map = new mapboxgl.Map({
     minZoom: 0
 });
 
-const lookups = { 'admin-1': '<ENTER YOUR ENTERPRISE BOUNDARY FILE PATH HERE>' }
+const lookups = { 'admin-1': '<ENTER YOUR ENTERPRISE BOUNDARY FILE REFERENCE HERE>' }
 
 var colorPalette = "YlGnBu";
-var loadingbar = document.getElementById('loading');
-var startTime, timer, featurecount //Performance timing
 var mapboxAccount = 'mapbox'
 var mapId, polyLayerName, pointLayerName, vtMatchProp, data_values;
 var maxValue = 2;
 
 var level = 'admin-1'
 var lookup_url = lookups[level]
-var popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-});
-var popupevent, hoverevent, clickevent, selectedFeatures;
 var featureFilter = ['all', ['in', 'id']]
 
 map.on('load', () => {
 
     // Hiding labels to highlight the style
-    let style = map.getStyle();
-    style.layers.forEach(function(l) {
-        if ((l.id.indexOf('country-label') != -1) && (l.type == 'symbol')) {
-            map.setLayoutProperty(l.id, 'visibility', 'none')
-        }
-        if ((l.id.indexOf('state-label') != -1) && (l.type == 'symbol')) {
-            map.setLayoutProperty(l.id, 'visibility', 'none')
-        }
-        if ((l.id.indexOf('place-city') != -1) && (l.type == 'symbol')) {
-            map.setLayoutProperty(l.id, 'visibility', 'none')
-        }
-    })
     getData(lookup_url, initmap, initLayers);
-    isMapLoading();
 });
 
 function getData(url, callbackone, callbacktwo) {
@@ -99,12 +77,6 @@ var colorKey = {
     "South": "#e78ac3"
 }
 
-var centerKey = {
-    "Midwest": [],
-    "East": [],
-    "West": [],
-    "South": []
-}
 
 function initmap(lookup_data, level) {
     // Join client data to lookup data, then get the matching vector tiles
@@ -132,57 +104,15 @@ function initmap(lookup_data, level) {
                 "z_min": data_values[key]['z_min']
             }
             featureFilter[1].push(key)
-            var b = data[key].bounds
-            var coords = [
-                [
-                    [b[0], b[1]],
-                    [b[0], b[3]],
-                    [b[2], b[3]],
-                    [b[2], b[1]],
-                    [b[0], b[1]]
-                ]
-            ]
-            var bbox_poly = turf.polygon(coords)
-            centerKey[match_data[key]].push(turf.centroid(bbox_poly))
         }
     });
 
-    // Hover element
-    var hover_geojson = {
-        features: [],
-        type: "FeatureCollection"
-    }
-
     // Add source for state polygons hosted on Mapbox
-    if (!map.getSource(level + "join")) {
         map.addSource(level + "join", {
             type: "vector",
             url: "mapbox://" + mapId
         });
-    }
 
-    if (!map.getSource(level + "hover")) {
-        map.addSource(level + "hover", {
-            type: "vector",
-            url: "mapbox://" + mapId
-        });
-    }
-
-    var point_features = []
-
-    for (var key in centerKey) {
-        var feat = turf.centroid(turf.featureCollection(centerKey[key]))
-        feat.properties = { "name": key }
-        point_features.push(feat)
-    }
-    var centerpoints = turf.featureCollection(point_features);
-
-    if (!map.getSource(level + "label")) {
-        map.addSource(level + "label", {
-            type: "geojson",
-            data: centerpoints
-        });
-    }
 
     // Calculate color for each state based on the matching data
     var scale = chroma.scale(chroma.brewer[colorPalette]).domain([0, maxValue / 4, maxValue / 2, maxValue]).mode('lab');
@@ -190,18 +120,12 @@ function initmap(lookup_data, level) {
     for (var key in data) {
         colorStops.push([key, colorKey[data[key].measure]]);
     };
-
-    // Popups and hovers
-    addPopupHover(level + 'join', level + 'hover');
-    //addSelectClick(level + 'join', level + 'selectionLine');
 };
 
 function initLayers(level) {
     // Add layer from the vector tile source with data-driven styles
 
     // Start render clock
-    startTime = window.performance.now();
-    if (!map.getLayer(level + 'join')) {
         map.addLayer({
             "id": level + "join",
             "type": "fill",
@@ -217,152 +141,4 @@ function initLayers(level) {
             },
             filter: featureFilter
         }, 'waterway-label');
-    } else {
-        map.setFilter(level + 'join', featureFilter);
-        map.setPaintProperty(level + 'join', 'fill-color', {
-            "property": vtMatchProp,
-            "type": "categorical",
-            "stops": colorStops
-        });
-    }
-
-    var scale = chroma.scale(chroma.brewer[colorPalette])
-
-    if (!map.getLayer(level + 'hover')) {
-        map.addLayer({
-            "id": level + 'hover',
-            "type": "line",
-            "source": level + "hover",
-            "source-layer": polyLayerName,
-            "layout": {},
-            "paint": {
-                "line-color": scale(1).hex(),
-                "line-width": {
-                    stops: [
-                        [0, 5],
-                        [16, 12]
-                    ]
-                },
-                "line-offset": 1
-            },
-            "filter": ['==', 'id', '0']
-        }, level + "join");
-    } else {
-        let filter = ['in', 'id']
-        selectedFeatures.forEach(function(f) {
-            filter.push(f)
-        })
-        map.setFilter(hoverLayer, filter);
-    }
-
-    if (!map.getLayer(level + 'label')) {
-        map.addLayer({
-            "id": level + "label",
-            "type": "symbol",
-            "source": level + "label",
-            "layout": {
-                "text-field": "{name}",
-                "text-size": {
-                    "stops": [
-                        [0, 10],
-                        [12, 32]
-                    ]
-                }
-            },
-            "paint": {
-                "text-halo-color": "white",
-                "text-halo-width": 2
-            }
-        });
-    }
-}
-
-function isMapLoading() {
-    loadingbar.style.visibility = 'visible';
-    map.on('render', afterChangeComplete);
-
-    function afterChangeComplete() {
-        if (!map.loaded()) {
-            return
-        } // still not loaded; bail out.
-
-        loadingbar.style.visibility = 'hidden';
-        map.off('render', afterChangeComplete); // remove this handler now that we're done.
-    }
-}
-
-function isMapLoading2() {
-    loading = true
-    map.on('render', afterChangeComplete);
-
-    function afterChangeComplete() {
-        if (!map.loaded()) {
-            return
-        } // still not loaded; bail out.
-        loading = false
-        map.off('render', afterChangeComplete); // remove this handler now that we're done.
-    }
-}
-
-function addPopupHover(popuplayer, hoverLayer) {
-    // Add a popup to the map
-    var id = '0'
-
-    popupevent = _.debounce(function(e) {
-        if (!map.getLayer(popuplayer)) {
-            return
-        }
-        var features = map.queryRenderedFeatures(e.point, {
-            layers: [popuplayer]
-        });
-
-        map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-        if (!features.length) {
-            popup.remove();
-            map.setFilter(hoverLayer, ['==', 'id', '0']);
-            id = '0'
-            return
-        }
-
-        let offsetpoint = map.unproject([e.point.x, e.point.y])
-        let feature = features[0];
-        let newpk = feature.properties.id
-
-        if (id == newpk) {
-            // If the popup pk hasn't changed, just update the position, not the text
-            popup.setLngLat(offsetpoint)
-            return
-        } else {
-            //Set the pk of the polygon to the newly hovered pk
-            id = newpk;
-            var val = match_data[id]
-            selectedFeatures = []
-            for (var key in match_data) {
-                if (match_data[key] == val) {
-                    selectedFeatures.push(key)
-                }
-            }
-        }
-
-        //Create the tooltip
-        popup.setLngLat(offsetpoint)
-            .setHTML(' <h2> Tooltip </h2> <div class="p6">' +
-                '<li><b>Region: </b>' + data[id].measure + '</li></div>')
-            .addTo(map);
-
-        if (!loading) {
-            let filter = ['in', 'id']
-            selectedFeatures.forEach(function(f) {
-                filter.push(f)
-            })
-            map.setFilter(hoverLayer, filter);
-            isMapLoading2();
-        }
-
-    }, 8, {
-        'leading': false,
-        'trailing': true
-    });
-
-    map.on("mousemove", popupevent);
 }
