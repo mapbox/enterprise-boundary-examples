@@ -3,6 +3,10 @@ This repository contains a series of examples that showcase the implementation o
 For specific details on installing and running each example:
 
 ## merge-boundaries
-npm install
+1. Add your Mapbox token and Enterprise boundaries file reference to the index.js file 
 
-npm start
+2. npm install
+
+3. npm run build
+
+4. npm start
