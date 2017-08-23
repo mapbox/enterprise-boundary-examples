@@ -14,8 +14,8 @@ const lookups = { 'admin-1': './lookup/a1.json' }
 var level = 'admin-1'
 var lookup_url = lookups[level]
 
-// Create parenthierarchy of id -> types to merge shapes
-// Replace this with any hierarchy mapping feature id -> state
+// Create parent hierarchy of id -> types to merge shapes
+// Replace this with any hierarchy mapping feature id -> your custom grouping
 var match_data = {
     "USA121": "Midwest",
     "USA147": "Midwest",
