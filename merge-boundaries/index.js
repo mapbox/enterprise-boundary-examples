@@ -1,6 +1,6 @@
 'use strict';
 
-//mapboxgl.accessToken = 'your-mapbox-access-token';
+mapboxgl.accessToken = 'your-mapbox-access-token';
 
 const map = new mapboxgl.Map({
     container: 'map',
