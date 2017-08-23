@@ -1,15 +1,6 @@
 'use strict';
 
-const mapboxgl = require('mapbox-gl');
-const getJSON = require('simple-get-json');
-const chroma = require('chroma-js');
-
-var data = {};
-var filter = [];
-var colorStops = [];
-var loading = false;
-
-mapboxgl.accessToken = '<ENTER YOUR MAPBOX TOKEN HERE>';
+//mapboxgl.accessToken = 'your-mapbox-access-token';
 
 const map = new mapboxgl.Map({
     container: 'map',
@@ -19,32 +10,13 @@ const map = new mapboxgl.Map({
     minZoom: 0
 });
 
-const lookups = { 'admin-1': '<ENTER YOUR ENTERPRISE BOUNDARY FILE REFERENCE HERE>' }
-
-var colorPalette = "YlGnBu";
-var mapboxAccount = 'mapbox'
-var mapId, polyLayerName, pointLayerName, vtMatchProp, data_values;
-var maxValue = 2;
-
+const lookups = { 'admin-1': './lookup/a1.json' }
 var level = 'admin-1'
 var lookup_url = lookups[level]
-var featureFilter = ['all', ['in', 'id']]
 
-map.on('load', () => {
-
-    // Hiding labels to highlight the style
-    getData(lookup_url, initmap, initLayers);
-});
-
-function getData(url, callbackone, callbacktwo) {
-    getJSON(url, function(lookup_data) {
-        callbackone(lookup_data, level);
-        callbacktwo(level);
-    })
-}
-
+// Create parenthierarchy of id -> types to merge shapes
+// Replace this with any hierarchy mapping feature id -> state
 var match_data = {
-    "USA121": "Midwest",
     "USA121": "Midwest",
     "USA147": "Midwest",
     "USA117": "Midwest",
@@ -70,6 +42,7 @@ var match_data = {
     "USA112": "South"
 }
 
+// Create color stops for parent hierarchy
 var colorKey = {
     "Midwest": "#66c2a5",
     "East": "#fc8d62",
@@ -77,68 +50,61 @@ var colorKey = {
     "South": "#e78ac3"
 }
 
+map.on('load', () => {
+    //Load the lookup data and create the viz
+    fetch(lookup_url)
+        .then(res => res.json())
+        .then((jsondata) => {
+            createViz(jsondata);
+        })
+        .catch(err => console.error(err));
+});
 
-function initmap(lookup_data, level) {
-    // Join client data to lookup data, then get the matching vector tiles
 
-    // Get the vector tile source to join to
-    mapId = lookup_data['TilesetName'];
-    polyLayerName = lookup_data['PolyLayerName'];
-    pointLayerName = lookup_data['PointLayerName'];
-    vtMatchProp = "id";
-    featureFilter = ['all', ['in', 'id']]
-    colorStops = []
+function createViz(lookup_data) {
+
+    // Get the vector tile source from lookup table
+    var mapId = lookup_data['TilesetName'];
+    var polyLayerName = lookup_data['PolyLayerName'];
+    var featureFilter = ['all', ['in', 'id']];
+    var data_values = lookup_data['data'];
 
     // All the values in the data are in the data object of the lookup json
-    data_values = lookup_data['data']
-    data = {}
-
+    var data = {}
     Object.keys(data_values).sort().forEach(function(key) {
-
-        // Find keys matching the country-code for the viz
+        // Find keys matching the id from lookup table
         if (Object.keys(match_data).indexOf(key) > -1) {
-            data[key] = {
-                "measure": match_data[key],
-                "name": data_values[key]['name'],
-                "bounds": data_values[key]['bounds'],
-                "z_min": data_values[key]['z_min']
-            }
+            // Add the matching id to the feautures to render
+            data[key] = { "parent": match_data[key] }
             featureFilter[1].push(key)
         }
     });
 
-    // Add source for state polygons hosted on Mapbox
-        map.addSource(level + "join", {
-            type: "vector",
-            url: "mapbox://" + mapId
-        });
-
-
-    // Calculate color for each state based on the matching data
-    var scale = chroma.scale(chroma.brewer[colorPalette]).domain([0, maxValue / 4, maxValue / 2, maxValue]).mode('lab');
-
+    // Create color stops for matching keys
+    var colorStops = []
     for (var key in data) {
-        colorStops.push([key, colorKey[data[key].measure]]);
+        colorStops.push([key, colorKey[data[key].parent]]);
     };
+
+    // Add source for matching enterprise boundaries
+    map.addSource(level + "join", {
+        type: "vector",
+        url: "mapbox://" + mapId
+    });
+
+    // Create layer for merged-states
+    map.addLayer({
+        "id": level + "join",
+        "type": "fill",
+        "source": level + "join",
+        "source-layer": polyLayerName,
+        "paint": {
+            "fill-color": {
+                "property": 'id',
+                "type": "categorical",
+                "stops": colorStops
+            }
+        },
+        filter: featureFilter
+    }, 'waterway-label');
 };
-
-function initLayers(level) {
-    // Add layer from the vector tile source with data-driven styles
-
-    // Start render clock
-        map.addLayer({
-            "id": level + "join",
-            "type": "fill",
-            "source": level + "join",
-            "source-layer": polyLayerName,
-            "paint": {
-                "fill-color": {
-                    "property": vtMatchProp,
-                    "type": "categorical",
-                    "stops": colorStops
-                },
-                "fill-opacity": 1
-            },
-            filter: featureFilter
-        }, 'waterway-label');
-}

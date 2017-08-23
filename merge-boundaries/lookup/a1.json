@@ -1,0 +1,31 @@
+{
+"TilesetName":"mapbox.enterprise-boundaries-a1-v1",
+"PointLayerName":"points_admin_1",
+"PolyLayerName":"boundaries_admin_1",
+"level":"1",
+"data":{
+"USA121":{"parent_4": "", "name_ascii": "Kentucky", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Kentucky", "bounds": [-89.418, 36.497, -81.965, 39.147], "parent_1": "", "level": "a1"}
+,"USA147":{"parent_4": "", "name_ascii": "Tennessee", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Tennessee", "bounds": [-90.31, 34.983, -81.647, 36.678], "parent_1": "", "level": "a1"}
+,"USA117":{"parent_4": "", "name_ascii": "Illinois", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Illinois", "bounds": [-91.513, 36.97, -87.495, 42.508], "parent_1": "", "level": "a1"}
+,"USA118":{"parent_4": "", "name_ascii": "Indiana", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Indiana", "bounds": [-88.098, 37.772, -84.785, 41.761], "parent_1": "", "level": "a1"}
+,"USA139":{"parent_4": "", "name_ascii": "Ohio", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Ohio", "bounds": [-84.82, 38.403, -80.518, 41.978], "parent_1": "", "level": "a1"}
+,"USA155":{"parent_4": "", "name_ascii": "Wisconsin", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Wisconsin", "bounds": [-92.889, 42.492, -86.97, 46.963], "parent_1": "", "level": "a1"}
+,"USA142":{"parent_4": "", "name_ascii": "Pennsylvania", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Pennsylvania", "bounds": [-80.52, 39.72, -74.69, 42.269], "parent_1": "", "level": "a1"}
+,"USA134":{"parent_4": "", "name_ascii": "New Jersey", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "New Jersey", "bounds": [-75.56, 38.929, -73.902, 41.357], "parent_1": "", "level": "a1"}
+,"USA110":{"parent_4": "", "name_ascii": "Delaware", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Delaware", "bounds": [-75.789, 38.451, -75.049, 39.839], "parent_1": "", "level": "a1"}
+,"USA124":{"parent_4": "", "name_ascii": "Maryland", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Maryland", "bounds": [-79.488, 38.036, -76.06, 39.723], "parent_1": "", "level": "a1"}
+,"USA154":{"parent_4": "", "name_ascii": "West Virginia", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "West Virginia", "bounds": [-82.644, 37.201, -77.719, 40.639], "parent_1": "", "level": "a1"}
+,"USA151":{"parent_4": "", "name_ascii": "Virginia", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Virginia", "bounds": [-83.675, 36.541, -75.867, 39.466], "parent_1": "", "level": "a1"}
+,"USA137":{"parent_4": "", "name_ascii": "North Carolina", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "North Carolina", "bounds": [-84.322, 33.84, -75.717, 36.588], "parent_1": "", "level": "a1"}
+,"USA130":{"parent_4": "", "name_ascii": "Montana", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Montana", "bounds": [-116.05, 44.358, -104.04, 49.001], "parent_1": "", "level": "a1"}
+,"USA116":{"parent_4": "", "name_ascii": "Idaho", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Idaho", "bounds": [-117.243, 41.988, -111.043, 49.0], "parent_1": "", "level": "a1"}
+,"USA141":{"parent_4": "", "name_ascii": "Oregon", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Oregon", "bounds": [-124.567, 41.992, -116.463, 46.237], "parent_1": "", "level": "a1"}
+,"USA153":{"parent_4": "", "name_ascii": "Washington", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Washington", "bounds": [-124.736, 45.544, -116.916, 49.003], "parent_1": "", "level": "a1"}
+,"USA106":{"parent_4": "", "name_ascii": "California", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "California", "bounds": [-124.41, 32.534, -114.131, 42.01], "parent_1": "", "level": "a1"}
+,"USA122":{"parent_4": "", "name_ascii": "Louisiana", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Louisiana", "bounds": [-94.043, 29.084, -89.19, 33.02], "parent_1": "", "level": "a1"}
+,"USA128":{"parent_4": "", "name_ascii": "Mississippi", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Mississippi", "bounds": [-91.655, 30.174, -88.098, 34.996], "parent_1": "", "level": "a1"}
+,"USA101":{"parent_4": "", "name_ascii": "Alabama", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Alabama", "bounds": [-88.473, 30.223, -84.888, 35.008], "parent_1": "", "level": "a1"}
+,"USA113":{"parent_4": "", "name_ascii": "Georgia", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Georgia", "bounds": [-85.605, 30.356, -80.841, 35.001], "parent_1": "", "level": "a1"}
+,"USA112":{"parent_4": "", "name_ascii": "Florida", "country_code": "US", "parent_3": "", "z_min": 0, "parent_0": "US", "parent_2": "", "name": "Florida", "bounds": [-87.635, 24.95, -80.031, 31.001], "parent_1": "", "level": "a1"}
+}
+}
